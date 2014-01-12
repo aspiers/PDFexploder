@@ -6,15 +6,15 @@ require 'csv'
 require 'section'
 
 class Book
-  attr_reader :name, :directory
+  attr_reader :name, :filename, :index_filename
   attr_accessor :sections, :description
 
   @@all = []
 
-  def initialize(directory, filename, description)
-    @directory = directory
+  def initialize(filename, index_filename, description)
     @filename = filename
-    @name = filename.sub(/\.pdf$/, '')
+    @index_filename = index_filename
+    @name = File.basename(filename).sub(/\.pdf$/, '')
     @description = description
     @@all.push self
     @sections = []
@@ -30,14 +30,6 @@ class Book
     @sections.push section
   end
 
-  def pdf
-    directory + '/' + name + '.pdf'
-  end
-
-  def index
-    directory + '/' + name + '-index.csv'
-  end
-
   def inspect
     "#<Book:#{name} (#{sections.length} sections)>"
   end
@@ -47,8 +39,8 @@ class Book
   end
 
   def read_index
-    $stderr.puts "Processing #{index} ..."
-    File.open(index) do |file|
+    $stderr.puts "Processing #{index_filename} ..."
+    File.open(index_filename) do |file|
       file.each_line do |line|
         # $stderr.puts "  #{name}: #{line}"
         next if line =~ /^\s*(#|$)/
@@ -57,7 +49,7 @@ class Book
         begin
           name, first_page, last_page = CSV.parse_line(line)
         rescue CSV::MalformedCSVError => e
-          abort "Failed to parse line #{file.lineno} of #{index} (#{e}):\n[#{line}]"
+          abort "Failed to parse line #{file.lineno} of #{index_filename} (#{e}):\n[#{line}]"
         end
         Section.new(name, self, first_page.to_i, last_page ? last_page.to_i : nil)
       end

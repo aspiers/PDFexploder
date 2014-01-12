@@ -37,7 +37,7 @@ class Section
       return
     end
 
-    cmd = [ 'pdfjam', book.pdf, "#{first_page}-#{last_page}", '-o', outfile ]
+    cmd = [ 'pdfjam', book.filename, "#{first_page}-#{last_page}", '-o', outfile ]
     out, err = '', ''
     success = Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
       out = stdout.readlines().join('')

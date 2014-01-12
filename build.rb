@@ -12,16 +12,22 @@ books_dir = Dir.pwd
 
 require 'book'
 
-abort "Usage: #$0 CSV TEMPLATE OUTDIR" unless ARGV.length == 3
-csv_file, template_file, out_dir = ARGV
+unless ARGV.length == 5
+  abort "Usage: #$0 CSV TEMPLATE PDF-DIR INDEX-DIR OUTPUT-DIR"
+end
+
+csv_file, template_file, pdf_dir, index_dir, out_dir = ARGV
 
 title = nil
 File.open(csv_file) do |csv|
   title = csv.readline.chomp
   csv.each_line do |line|
     next if line =~ /^\s*#/
-    filename, description = CSV.parse_line(line)
-    Book.new(books_dir, filename, description)
+    book_name, description = CSV.parse_line(line)
+    book_name.sub!(/\.pdf$/, '')
+    filename = "#{pdf_dir}/#{book_name}.pdf"
+    index_filename = "#{index_dir}/#{book_name}.csv"
+    Book.new(filename, index_filename, description)
   end
 end
 
