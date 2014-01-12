@@ -1,8 +1,8 @@
 #!/usr/bin/ruby
 
-class Tune
+class Section
   attr_reader :name, :book, :first_page, :latex_name
-  attr_accessor :last_page, :tunes
+  attr_accessor :last_page, :sections
 
   @@all = []
 
@@ -10,7 +10,7 @@ class Tune
     @name = name
     @latex_name = name.gsub(/[#&%]/, "\\\\&") # escape LaTeX meta-characters
     @book = book
-    book.add_tune self
+    book.add_section self
     @first_page = first_page
     @last_page = last_page
     @@all.push self

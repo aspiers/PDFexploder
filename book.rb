@@ -3,11 +3,11 @@
 require 'fileutils'
 require 'csv'
 
-require 'tune'
+require 'section'
 
 class Book
   attr_reader :name, :directory
-  attr_accessor :tunes, :description
+  attr_accessor :sections, :description
 
   @@all = []
 
@@ -17,7 +17,7 @@ class Book
     @name = filename.sub(/\.pdf$/, '')
     @description = description
     @@all.push self
-    @tunes = []
+    @sections = []
     read_index
     calculate_last_pages
   end
@@ -26,8 +26,8 @@ class Book
     @@all
   end
 
-  def add_tune(tune)
-    @tunes.push tune
+  def add_section(section)
+    @sections.push section
   end
 
   def pdf
@@ -39,7 +39,7 @@ class Book
   end
 
   def inspect
-    "#<Book:#{name} (#{tunes.length} tunes)>"
+    "#<Book:#{name} (#{sections.length} sections)>"
   end
 
   def <=>(other)
@@ -59,34 +59,34 @@ class Book
         rescue CSV::MalformedCSVError => e
           abort "Failed to parse line #{file.lineno} of #{index} (#{e}):\n[#{line}]"
         end
-        Tune.new(name, self, first_page.to_i, last_page ? last_page.to_i : nil)
+        Section.new(name, self, first_page.to_i, last_page ? last_page.to_i : nil)
       end
     end
 
-    tunes.sort!
+    sections.sort!
   end
 
   def calculate_last_pages
-    # Look at the page numbers of adjacent tunes to calculate
-    # how many pages each tune occupies
-    for i in 0..(tunes.length - 2)
-      this_tune = tunes[i]
-      next if this_tune.last_page
+    # Look at the page numbers of adjacent sections to calculate
+    # how many pages each section occupies
+    for i in 0..(sections.length - 2)
+      this_section = sections[i]
+      next if this_section.last_page
 
       # Last page was not specified so figure it out by looking at the
-      # page the next tune starts on
-      next_tune = tunes[i+1]
-      pages_until_next_tune = next_tune.first_page - this_tune.first_page
+      # page the next section starts on
+      next_section = sections[i+1]
+      pages_until_next_section = next_section.first_page - this_section.first_page
       num_pages =
-        if pages_until_next_tune == 0
+        if pages_until_next_section == 0
           1
-        elsif pages_until_next_tune > 6
-          raise "WARNING: #{this_tune.name} p#{this_tune.first_page} in #{name} " \
-          "followed by #{next_tune.name} p#{next_tune.first_page}"
+        elsif pages_until_next_section > 6
+          raise "WARNING: #{this_section.name} p#{this_section.first_page} in #{name} " \
+          "followed by #{next_section.name} p#{next_section.first_page}"
         else
-          pages_until_next_tune
+          pages_until_next_section
         end
-      this_tune.last_page = this_tune.first_page + num_pages - 1
+      this_section.last_page = this_section.first_page + num_pages - 1
     end
   end
 
@@ -94,6 +94,6 @@ class Book
     #FileUtils.rm_rf(split_dir)
     Dir.mkdir(split_dir) unless File.directory? split_dir
     $stderr.puts "Exploding #{name} to #{split_dir} ..."
-    tunes.each { |tune| tune.extract(split_dir) }
+    sections.each { |section| section.extract(split_dir) }
   end
 end
