@@ -7,6 +7,7 @@ LATEX = '00-index.latex'
 require 'csv'
 require 'erb'
 require 'fileutils'
+require 'tmpdir'
 
 books_dir = Dir.pwd
 
@@ -32,13 +33,17 @@ File.open(csv_file) do |csv|
 end
 
 template = ERB.new(File.read(template_file), nil, '-')
-File.open(LATEX, 'w') do |latex|
-  latex.puts template.result(binding)
-end
+Dir.mktmpdir do |tmpdir|
+  puts tmpdir
+  File.open(tmpdir + '/' + LATEX, 'w') do |latex|
+    latex.puts template.result(binding)
+  end
 
-system 'pdflatex', LATEX
-Dir.mkdir(out_dir) unless File.directory? out_dir
-FileUtils.mv('00-index.pdf', out_dir)
+  Dir.chdir(tmpdir)
+  system 'pdflatex', LATEX
+  Dir.mkdir(out_dir) unless File.directory? out_dir
+  FileUtils.mv('00-index.pdf', out_dir)
+end
 
 Book.all.each do |book|
   book.explode(out_dir)
