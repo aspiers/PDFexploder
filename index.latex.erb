@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage{pdfpages}
+% http://en.wikibooks.org/wiki/LaTeX/Hyperlinks
+%
+% urlcolor is required for songs with a colon in, since hyperref seems
+% to assume the presence of a colon means that the link is is a URL.
+\usepackage[colorlinks=true,filecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[hmargin=0.5in,vmargin=0.2in]{geometry}
+
+\usepackage{multicol}
+
+\usepackage[yyyymmdd,hhmmss]{datetime}
+
+\begin{document}
+
+% \begin{titlepage}
+% \end{titlepage}
+
+\title{\bf{<%= title %>}}
+\author{Sorted, indexed, and hyperlinked!}
+\date{Compiled on \today\ at \currenttime}
+\maketitle{}
+
+\renewcommand{\abstractname}{\vspace{-\baselineskip}}
+\begin{abstract}
+\begin{center}
+Tunes from:
+\end{center}
+
+\begin{multicols}{2}
+\begin{itemize}
+
+<% Book.all.each do |book| -%>
+  \item <%= book.description %> (\texttt{<%= book.name %>})
+<% end -%>
+
+\end{itemize}
+\end{multicols}
+\end{abstract}
+
+\begin{multicols}{2}
+\begin{itemize}
+
+\itemsep 0em
+
+<% Tune.all.sort_by(&:name).each do |tune| -%>
+  \item[] \href{<%= tune.filename %>}{<%= tune.latex_name %> (<%= tune.book.name %> p<%= tune.first_page %>)}
+<%   break if LIMIT > 0 && i > LIMIT -%>
+<% end -%>
+\end{itemize}
+\end{multicols}
+
+\end{document}
