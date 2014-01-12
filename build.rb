@@ -8,7 +8,6 @@ require 'csv'
 require 'erb'
 require 'fileutils'
 
-$:.push File.dirname(__FILE__)
 books_dir = Dir.pwd
 
 require 'book'
