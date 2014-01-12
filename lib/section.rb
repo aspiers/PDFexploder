@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require 'open3'
+
 class Section
   attr_reader :name, :book, :first_page, :latex_name
   attr_accessor :last_page, :sections
@@ -36,8 +38,18 @@ class Section
     end
 
     cmd = [ 'pdfjam', book.pdf, "#{first_page}-#{last_page}", '-o', outfile ]
-    system(*cmd)
-    abort "pdfjam failed with args #{cmd[1..-1]}" unless $?.success?
+    out, err = '', ''
+    success = Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
+      out = stdout.readlines().join('')
+      err = stderr.readlines().join('')
+      wait_thread.value.success?
+    end
+    unless success
+      abort(("-" * 70) + "\n" +
+            "pdfjam failed with args #{cmd[1..-1]}\n" +
+            "STDOUT:\n#{out}\n" +
+            "STDERR:\n#{err}\n")
+    end
     $stderr.puts "  extracted: #{filename}"
   end
 end
