@@ -28,7 +28,14 @@ File.open(csv_file) do |csv|
     book_name.sub!(/\.pdf$/, '')
     filename = "#{pdf_dir}/#{book_name}.pdf"
     index_filename = "#{index_dir}/#{book_name}.csv"
-    Book.new(filename, index_filename, description)
+    book = Book.new(filename, index_filename, description)
+    book.missing_pages.tap do |missing|
+      if missing.empty?
+        puts "no missing pages in #{book.name}!"
+      else
+        puts "%s is missing pages: %s" % [book.name, missing.join(", ")]
+      end
+    end
   end
 end
 

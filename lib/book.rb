@@ -106,6 +106,10 @@ class Book
     end
   end
 
+  def missing_pages
+    (1..last_page).reject { |i| @section_pages[i] }
+  end
+
   def explode(split_dir)
     #FileUtils.rm_rf(split_dir)
     Dir.mkdir(split_dir) unless File.directory? split_dir
