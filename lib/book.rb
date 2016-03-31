@@ -6,7 +6,7 @@ require 'csv'
 require 'section'
 
 class Book
-  attr_reader :name, :filename, :index_filename
+  attr_reader :name, :filename, :index_filename, :last_page
   attr_accessor :sections, :description
 
   @@all = []
@@ -19,6 +19,7 @@ class Book
     @@all.push self
     @sections = []
     read_index
+    get_last_page
     calculate_last_pages
   end
 
@@ -60,6 +61,15 @@ class Book
     end
 
     sections.sort!
+  end
+
+  def get_last_page
+    success, info, err = Command.run(['pdfinfo', filename])
+    raise "pdfinfo #{filename} failed" unless success
+    unless info =~ /^Pages:\s+(\d+)$/
+      raise "pdfinfo #{filename} didn't return last page"
+    end
+    @last_page = $1.to_i
   end
 
   def calculate_last_pages
