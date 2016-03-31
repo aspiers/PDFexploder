@@ -18,9 +18,11 @@ class Book
     @description = description
     @@all.push self
     @sections = []
+    @section_pages = []
     read_index
     get_last_page
     calculate_last_pages
+    get_pages_from_sections
   end
 
   def self.all
@@ -28,7 +30,15 @@ class Book
   end
 
   def add_section(section)
-    @sections.push section
+    sections << section
+  end
+
+  def get_pages_from_sections
+    sections.each do |section|
+      section.pages.each do |page|
+        @section_pages[page] = section
+      end
+    end
   end
 
   def inspect

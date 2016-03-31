@@ -27,6 +27,10 @@ class Section
     @first_page <=> other.first_page
   end
 
+  def pages
+    last_page.nil? ? [first_page] : first_page..last_page
+  end
+
   def filename
     "#{name} (#{book.name} p#{first_page}).pdf".gsub('/', '_')
   end
