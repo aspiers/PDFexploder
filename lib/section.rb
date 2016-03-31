@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require 'open3'
+require 'command'
 
 class Section
   attr_reader :name, :book, :first_page, :latex_name
@@ -38,12 +39,7 @@ class Section
     end
 
     cmd = [ 'pdfjam', book.filename, "#{first_page}-#{last_page}", '-o', outfile ]
-    out, err = '', ''
-    success = Open3.popen3(*cmd) do |stdin, stdout, stderr, wait_thread|
-      out = stdout.readlines().join('')
-      err = stderr.readlines().join('')
-      wait_thread.value.success?
-    end
+    success, out, err = Command.run(cmd)
     unless success
       abort(("-" * 70) + "\n" +
             "pdfjam failed with args #{cmd[1..-1]}\n" +
