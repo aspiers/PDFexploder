@@ -51,6 +51,10 @@ class Book
         rescue CSV::MalformedCSVError => e
           abort "Failed to parse line #{file.lineno} of #{index_filename} (#{e}):\n[#{line}]"
         end
+        unless first_page =~ /^\d+$/
+          warn "Invalid first page '#{first_page}' for '#{name}'; skipping"
+          next
+        end
         Section.new(name, self, first_page.to_i, last_page ? last_page.to_i : nil)
       end
     end
