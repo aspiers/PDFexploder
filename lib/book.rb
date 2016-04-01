@@ -18,11 +18,12 @@ class Book
     @description = description
     @@all.push self
     @sections = []
-    @section_pages = []
+    @section_pages = {}
     read_index
     get_last_page
     calculate_last_pages
     get_pages_from_sections
+    validate_page_numbers
   end
 
   def self.all
@@ -37,6 +38,23 @@ class Book
     sections.each do |section|
       section.pages.each do |page|
         @section_pages[page] = section
+      end
+    end
+  end
+
+  def validate_page_numbers
+    too_high_sections = @section_pages.inject({}) do |sections, i|
+      page, section = *i
+      if section && page > last_page
+        sections[section] ||= []
+        sections[section] << page
+      end
+      sections
+    end
+    if too_high_sections.any?
+      warn "Sections with pages too high:"
+      too_high_sections.each do |section, pages|
+        warn "  #{section.name}: " + pages.join(", ")
       end
     end
   end
