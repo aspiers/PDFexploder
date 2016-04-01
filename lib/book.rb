@@ -58,15 +58,15 @@ class Book
         line.chomp!
 
         begin
-          name, first_page, last_page = CSV.parse_line(line)
+          name, first, last = CSV.parse_line(line)
         rescue CSV::MalformedCSVError => e
           abort "Failed to parse line #{file.lineno} of #{index_filename} (#{e}):\n[#{line}]"
         end
-        unless first_page =~ /^\d+$/
-          warn "Invalid first page '#{first_page}' for '#{name}'; skipping"
+        unless first =~ /^\d+$/
+          warn "Invalid first page '#{first}' for '#{name}'; skipping"
           next
         end
-        Section.new(name, self, first_page.to_i, last_page ? last_page.to_i : nil)
+        Section.new(name, self, first.to_i, last ? last.to_i : nil)
       end
     end
 
