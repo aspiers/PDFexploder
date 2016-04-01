@@ -18,7 +18,11 @@ class Book
     @description = description
     @@all.push self
     @sections = []
+
+    # Hash mapping page number to Array of sections appearing on that page
+    # (multiple sections could appear on one page)
     @section_pages = {}
+
     read_index
     get_last_page
     calculate_last_pages
@@ -37,19 +41,21 @@ class Book
   def get_pages_from_sections
     sections.each do |section|
       section.pages.each do |page|
-        @section_pages[page] = section
+        (@section_pages[page] ||= []) << section
       end
     end
   end
 
   def validate_page_numbers
-    too_high_sections = @section_pages.inject({}) do |sections, i|
-      page, section = *i
-      if section && page > last_page
-        sections[section] ||= []
-        sections[section] << page
+    too_high_sections = @section_pages.inject({}) do |acc, kv|
+      page, sections = *kv
+      if sections && page > last_page
+        sections.each do |section|
+          acc[section] ||= []
+          acc[section] << page
+        end
       end
-      sections
+      acc
     end
     if too_high_sections.any?
       warn "Sections with pages too high:"
