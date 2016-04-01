@@ -62,6 +62,7 @@ class Book
       too_high_sections.each do |section, pages|
         warn "  #{section.name}: " + pages.join(", ")
       end
+      exit 1
     end
   end
 
