@@ -19,6 +19,14 @@ class Section
     @@all.push self
   end
 
+  def inspect
+    "#<%s: %s (%s)>" % [self.class, name, pages.to_a.join(",")]
+  end
+
+  def to_s
+    inspect
+  end
+
   def self.all
     @@all
   end
