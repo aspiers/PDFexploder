@@ -39,8 +39,17 @@ class Section
     last_page.nil? ? [first_page] : first_page..last_page
   end
 
+  def pages_string
+    (last_page.nil? || last_page == first_page) ?
+      first_page.to_s : "%s-%s" % [first_page, last_page]
+  end
+
+  def pages_p_string
+    (first_page == last_page ? "p" : "pp") + pages_string
+  end
+
   def filename
-    "#{name} (#{book.name} p#{first_page}).pdf".gsub('/', '_')
+    "#{name} (#{book.name} #{pages_p_string}).pdf".gsub('/', '_')
   end
 
   def extract(dir)

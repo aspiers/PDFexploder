@@ -45,7 +45,7 @@ Compiled from:
 \itemsep 0em
 
 <% Section.all.sort_by(&:name).each do |section| -%>
-  \item[] \href{<%= section.filename %>}{<%= section.latex_name %> (<%= section.book.name %> p<%= section.first_page %>)}
+  \item[] \href{<%= section.filename %>}{<%= section.latex_name %> (<%= section.book.name %> <%= section.pages_p_string %>)}
 <%   break if LIMIT > 0 && i > LIMIT -%>
 <% end -%>
 \end{itemize}
