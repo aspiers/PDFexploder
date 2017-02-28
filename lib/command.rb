@@ -1,3 +1,5 @@
+require 'open3'
+
 module Command
   def self.run(cmd)
     out, err = '', ''

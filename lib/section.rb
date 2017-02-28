@@ -1,6 +1,5 @@
 #!/usr/bin/ruby
 
-require 'open3'
 require 'command'
 
 class Section
