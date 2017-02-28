@@ -23,8 +23,9 @@ write the CSV index files.
 
 ## Similar software
 
-- https://git.zx2c4.com/realbook-splitter/tree/
-- http://www.pdfsam.org/pdfsam-basic/
+- https://git.zx2c4.com/realbook-splitter/tree/ (Python script)
+- http://www.pdfsam.org/pdfsam-basic/ (cross-platform)
+- https://github.com/trevorprinn/RealBookExtractor/wiki (Windows only)
 
 Please [edit this file and then submit a pull request](https://github.com/aspiers/PDFexploder/edit/master/README.md)
 if you know of any other similar software - thanks!
